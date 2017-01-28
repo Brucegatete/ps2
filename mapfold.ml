@@ -7,7 +7,7 @@
 (*======================================================================
 Problem 1: Higher-order functional programming
 
-Solve each problem in this part using List.map, List.fold_right,
+Solve each problem in this part using List.map, List.fold_left,
 List.fold_right, or List.filter. You are permitted to use other
 functions from the list module. However, you should think about
 whether they’re necessary and be mindful of their usage.
