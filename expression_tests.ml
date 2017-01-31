@@ -1,5 +1,4 @@
 open Expression ;;
-open Ast ;;
 open ExpressionLibrary ;;
 
 let test () =
