@@ -69,7 +69,7 @@ let test () =
 
   (*deoptionalize*)
   assert ((deoptionalize [None])= []);;
-  assert ((deoptionalize [Some 1])= [1]);;
+  assert ((deoptionalize [Some 1])= [ 1 ]);;
   assert ((deoptionalize [Some (-1)])= [-1]);;
   assert ((deoptionalize [Some 3; None; Some 5; Some 10])= [ 3; 5; 10]);;
 
