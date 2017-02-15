@@ -176,11 +176,11 @@ type student = name * year
 
 
 let filter_by_year (slist : student list) (yr : year) : name list = 
-  List.map (fun (x, y) -> x) (List.filter (fun (x,y) ->  if y = yr then true else false) slist);;
+  List.map (fun (x, _) -> x) (List.filter (fun (_,y) ->  if y = yr then true else false) slist);;
 
 let same_year (x,y) year =
   match x, y with
-  | (x, y) -> if y = year then true else false
+  | (_x, y) -> if y = year then true else false
 
 (*======================================================================
 Time estimate
