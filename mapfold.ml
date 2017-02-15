@@ -25,18 +25,16 @@ Problem 1.1: The function "negate_all" flips the sign of each element
 in a list. 
 ......................................................................*)
 
-let negate_all (nums : int list) : int list = 
-  failwith "negate_all not implemented"
-;;
+let negate_all (nums : int list) : int list = List.map (fun x -> x * (-1)) nums ;;
+ 
 
 (*......................................................................
 Problem 1.2: The function "sum" returns the sum of the elements in 
 the list. 
 ......................................................................*)
 
-let sum (nums : int list) : int =
-  failwith "sum not implemented"
-;;
+let sum (nums : int list) : int = List.fold_left (+) 0 nums;;
+ 
 
 (*......................................................................
 Problem 1.3: The function "sum_rows" takes a list of "rows", each an 
@@ -47,9 +45,7 @@ sum_rows [[1; 2]; [3; 4]] =
 - : int list = [3; 7] 
 ......................................................................*)
 
-let sum_rows (rows : int list list) : int list =
-  failwith "sum_rows not implemented"
-;;
+let sum_rows (rows : int list list) : int list = List.map sum rows;;
 
 (*......................................................................
 Problem 1.4: The function "filter_odd" retrains only the odd numbers
@@ -59,9 +55,8 @@ filter_odd [1; 4; 5; -3] =
 - : int list = [1; 5; -3]
 ......................................................................*)
 
-let filter_odd (nums : int list) : int list =
-  failwith "filter_odd not implemented"
-;;
+let filter_odd (nums : int list) : int list = List.filter (fun x -> x mod 2 = 1 || x mod 2 = -1) nums;;
+  
 
 (*......................................................................
 Problem 1.5: The function "num_occurs" returns the number of times a given
@@ -71,9 +66,9 @@ num_occurs 4 [1; 3; 4; 5; 4] =
 - : int = 2
 ......................................................................*)
 
-let num_occurs (n : int) (nums : int list) : int =
-    failwith "num_occurs not implemented"
-;;
+let num_occurs (n : int) (nums : int list) : int = 
+  sum (List.map ((fun n a ->  if n = a then 1 else 0) n) nums);;
+    
 
 (*......................................................................
 Problem 1.6: The function "super_sum" sums all of the numbers in a list
@@ -83,9 +78,8 @@ super_sum [[1; 2; 3]; []; [5]] =
 - : int = 11
 ......................................................................*)
 
-let super_sum (nlists : int list list) : int =
-  failwith "super_sum not implemented"
-;;
+let super_sum (nlists : int list list) : int = sum (List.map sum nlists) ;;
+  
 
 (*......................................................................
 Problem 1.7: The function "filter_range" returns a list of numbers in 
@@ -96,18 +90,18 @@ filter_range [1; 3; 4; 5; 2] (1, 3) =
 - : int list = [1; 3; 2]
 ......................................................................*)
 
-let filter_range (nums : int list) (range : int * int) : int list =
-  failwith "filter_range not implemented"
-;;
+
+let filter_range (nums : int list) (range : int * int) : int list = 
+  let (a, b) = range in 
+  List.filter (fun x -> a <= x && x <= b) nums;;
+  
 
 (*......................................................................
 Problem 1.8: The function "float_of_ints" converts an int list into 
 a float list. 
 ......................................................................*)
 
-let floats_of_ints (nums : int list) : float list =
-  failwith "floats_of_ints not implemented"
-;;
+let floats_of_ints (nums : int list) : float list = List.map (fun x -> float_of_int (x)) nums;;
 
 (*......................................................................
 Problem 1.9: The function "log10s" applies the log10 function to all
@@ -118,9 +112,9 @@ log10s [1.0; 10.0; -10.0] =
 - : float option list = [Some 0.; Some 1.; None]
 ......................................................................*)
 
-let log10s (lst : float list) : float option list =
-  failwith "log10s not implemented"
-;;
+let log10s (lst : float list) : float option list = 
+  List.map (fun x -> if x <= 0. then None else Some (log10 x)) lst;;
+  
 
 (*......................................................................
 Problem 1.10: The function "deoptionalize" extracts values from a list 
@@ -131,20 +125,23 @@ deoptionalize [Some 3; None; Some 5; Some 10] =
 ......................................................................*)
 
 let deoptionalize (lst : 'a option list) : 'a list =
-  failwith "deoptionalize not implemented"
-;;
+  List.filter (fun x -> x != 0) (List.map (fun x -> match x with
+  None -> 0
+| Some x -> x) lst);;
+
 
 (*......................................................................
 Problem 1.11: The function "some_sum" sums all of the numbers in a list 
 of int options but ignores None values.
 ......................................................................*)
 
-let some_sum (nums : int option list) : int =
-  failwith "some_sum not implemented"
-;;
+let some_sum (nums : int option list) : int = 
+ sum (List.map (fun x -> match x with 
+                         | None -> 0
+                         | Some x -> x) nums);;
 
 (*......................................................................
-Problem 1.12: The function "mult_odds" returns the product of all
+Problem 1.12: The function "mult_odds" returns the product of all 
 of the odd elements of a list. For example:
 
 mult_odds [1; 3; 0; 2; -5] = 
@@ -152,17 +149,17 @@ mult_odds [1; 3; 0; 2; -5] =
 ......................................................................*)
 
 let mult_odds (nums : int list) : int =
-  failwith "mult_odds not implemented"
-;;
+ match nums with
+ [] -> 0
+ | _ :: _ -> List.fold_left (fun x y -> x * y) 1 (List.filter (fun x -> x mod 2 = 1 || x mod 2 = -1) nums);;
+  
 
 (*......................................................................
 Problem 1.13: The function "concat" concatenates a list of lists. 
 ......................................................................*)
 
-let concat (lists : 'a list list) : 'a list =
-  failwith "concat not implemented"
-;;
-
+let concat (lists : 'a list list) : 'a list = List.fold_left (@) [] lists;;
+  
 (*......................................................................
 Problem 1.14: We begin by defining a type that represents a student 
 as a tuple of the student's name and year. The function "filter_by_year"
@@ -177,9 +174,14 @@ type name = string
 type year = int
 type student = name * year
 
-let filter_by_year (slist : student list) (yr : year) : name list =
-  failwith "filter_by_year not implemented"
-;;
+
+
+let filter_by_year (slist : student list) (yr : year) : name list = 
+  List.map (fun (x, y) -> x) (List.filter (fun (x,y) ->  if y = yr then true else false) slist);;
+
+let same_year (x,y) year =
+  match x, y with
+  | (x, y) -> if y = year then true else false
 
 (*======================================================================
 Time estimate
@@ -190,4 +192,4 @@ about your responses and will use them to help guide us in creating
 future assignments.
 ......................................................................*)
 
-let minutes_spent_on_part1 () : int = failwith "not provided" ;;
+let minutes_spent_on_part1 () : int =  180 ;;
