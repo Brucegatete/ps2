@@ -164,4 +164,4 @@ about your responses and will use them to help guide us in creating
 future assignments.
 ......................................................................*)
 
-let minutes_spent_on_part2 () : int = failwith "not provided" ;;
+let minutes_spent_on_part2 () : int = 720 ;;
