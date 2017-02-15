@@ -62,7 +62,8 @@ particular value of x. Don't worry about specially handling the
 # evaluate (parse "x^4 + 3") 2.0
 - : float = 19.0
 ......................................................................*)
-
+(*This function evaluates the basic expressions, numbers and variable and then for unary and binary operations it evalautes the expressions
+in terms of the operators. It is recursive because for every expression, it will have to do the basic evaluation: Num and/or Var*)
 let rec evaluate (e : expression) (x : float) : float =
   match e, x with
   | Num a, _ -> a
@@ -92,7 +93,8 @@ you're responsible for filling in the remaining parts that implement
 the derivative transformation provided in the figure in the
 writeup. See the writeup for instructions.
 ......................................................................*)
-
+(* This function too looks for the derivative of basic expressions: Numbers and Variables. For binary and unary functions, it 
+derives the functions in respect to the operators and it comes back to do the basic derivation of Nums or Vars hence being recursive*)
 let rec derivative (e : expression) : expression =
   match e with
   | Num _ -> Num 0.
@@ -136,11 +138,15 @@ let checkexp strs xval =
 (*......................................................................
 Problem 2.4: Zero-finding. See writeup for instructions.
 ......................................................................*)
+(* This function when given an expression, it operates the Newton's method to find the closest zero of the function. The key part of 
+the implementation is the formula x = xo - f(x0)/ f'(x0). For every input the users puts in, the function will evaluate for x and 
+check if f(x) is less than the third argument (epsilon) if not less than the third argument the process will be repeated with x0 being the
+previous x up until lim is 0. If the limit is 0 and we have not found our desired root, we will return None*)
 
 let rec find_zero (e:expression) (g:float) (epsilon:float) (lim:int)
 	: float option = 
   match e, g, epsilon, lim with
-  _e, _g, _epsilon, 0 -> None
+  | _e, _g, _epsilon, 0 -> None
   | e, g, epsilon, lim -> 
 
   if abs_float (evaluate e (g -. ((evaluate e g)/. evaluate (derivative e) g))) < epsilon then Some g 
