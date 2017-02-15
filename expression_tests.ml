@@ -26,6 +26,9 @@ let test () =
 
   (*find_zero*)
   assert ((find_zero (parse "x^3") 1. 0.6 10)) = Some 1.);;
+  assert ((find_zero (parse "sin x") 2. 0.01 10)) = Some 3.26618627756910618);;
+  assert ((find_zero (parse "ln x") 0.9 0.001 10)) = Some 0.994824464092043614);;
+  assert ((find_zero (parse "cos x^4") 1. 0.0001 20)) = Some (-1.47007221911864749));;
 
 
 
