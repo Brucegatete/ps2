@@ -43,8 +43,15 @@ expression contains a variable "x". For example:
 - : bool = false
 ......................................................................*)
 
-let rec contains_var (e : expression) : bool =
-    failwith "contains_var not implemented" ;;
+let rec contains_var (e : expression) : bool = 
+match e with
+Num _ -> false
+| Var -> true
+| Unop (u, e1) ->  contains_var e1
+|Binop (b, e1, e2) -> 
+ if contains_var e1 = false && contains_var e2 = false then false
+else true;;
+  
 
 (*......................................................................
 Problem 2.2: The function "evaluate" evaluates an expression for a
@@ -56,7 +63,25 @@ particular value of x. Don't worry about specially handling the
 ......................................................................*)
 
 let rec evaluate (e : expression) (x : float) : float =
-  failwith "evaluate not implemented" ;;
+  match e, x with
+  | Num a, x -> a
+  | Var, x -> x
+  | Unop (u, e1), x ->
+      (match u with
+        | Sin -> sin (evaluate e1 x)
+        | Cos -> cos (evaluate e1 x)
+        | Ln -> log (evaluate e1 x)
+        | Neg -> (evaluate e1 x) *. (-1.))
+  | Binop (b, e1, e2), x ->
+       (match b with
+       | Add -> (evaluate e1 x) +. (evaluate e2 x)
+       | Sub -> (evaluate e1 x) -. (evaluate e2 x)
+       | Mul -> (evaluate e1 x) *. (evaluate e2 x)
+       | Div -> (evaluate e1 x) /. (evaluate e2 x)
+       | Pow -> (evaluate e1 x) ** (evaluate e2 x));;
+        
+
+  
 
 (*......................................................................
 Problem 2.d: The "derivative" function returns the expression that
@@ -70,12 +95,12 @@ writeup. See the writeup for instructions.
 let rec derivative (e : expression) : expression =
   match e with
   | Num _ -> Num 0.
-  | Var -> failwith "derivative: Var not implemented"
+  | Var -> Num 1.
   | Unop (u, e1) ->
      (match u with
-      | Sin -> failwith "derivative: Sin not implemented"
+      | Sin -> Binop (Mul, Unop (Cos, e1), derivative e1)
       | Cos -> Binop (Mul, Unop (Neg, Unop (Sin, e1)), derivative e1)
-      | Ln -> failwith "derivative: Ln not implemented"
+      | Ln -> Binop (Div, derivative e1, e1)
       | Neg -> Unop(Neg,derivative e1))
   | Binop (b, e1, e2) ->
      match b with
@@ -83,14 +108,15 @@ let rec derivative (e : expression) : expression =
      | Sub -> Binop (Sub, derivative e1, derivative e2)
      | Mul -> Binop (Add, Binop (Mul, e1, derivative e2),
                     Binop (Mul, derivative e1, e2))
-     | Div -> failwith "derivative: div not implemented"
-     | Pow ->
+     | Div -> Binop (Div, Binop (Sub, Binop (Mul, derivative e1, e2), Binop (Mul, derivative e2, e1)), Binop (Mul, e2, e2))
+     | Pow -> 
         (* split based on whether the exponent has any variables *)
-        if failwith "derivative: Pow not implemented"
-        then failwith "derivative: Pow case 1 not implemented"
-        else failwith "derivative: Pow case 2 not implemented"
-;;
-     
+        if derivative e2 = Num 0.
+        then Binop (Mul, e2, Binop (Pow, e1, Binop(Sub, e2, Num 1.)))
+        else Binop (Mul, Binop (Pow, e1, e2), Binop (Add, Binop (Mul, derivative e2, Unop(Ln, e1)), Binop (Div, Binop (Mul, derivative e1, e2), e1)));;
+
+
+
 (* A helpful function for testing. See the writeup. *)
 let checkexp strs xval =
   print_string ("Checking expression: " ^ strs ^ "\n");
@@ -98,7 +124,7 @@ let checkexp strs xval =
   (print_string "contains variable : ";
    print_string (string_of_bool (contains_var parsed));
    print_endline " ";
-   print_string "Result of evaluation: ";
+   print_string "Result of evaluation: "; 
    print_float (evaluate parsed xval);
    print_endline " ";
    print_string "Result of derivative: ";
@@ -111,9 +137,14 @@ Problem 2.4: Zero-finding. See writeup for instructions.
 ......................................................................*)
 
 let rec find_zero (e:expression) (g:float) (epsilon:float) (lim:int)
-	: float option =
-  failwith "find_zero not implemented" ;;
+	: float option = 
+  match e, g, epsilon, lim with
+  _e, _g, _epsilon, 0 -> None
+  | e, g, epsilon, lim -> 
 
+  if abs_float (evaluate e (g -. ((evaluate e g)/. evaluate (derivative e) g))) < epsilon then Some g 
+  else find_zero e (g -. ((evaluate e g)/. evaluate (derivative e) g)) epsilon (lim - 1);;
+  
 (*......................................................................
 Problem 2.5: Challenge problem -- exact zero-finding. This problem is
 not counted for credit and is not required. Just leave it
