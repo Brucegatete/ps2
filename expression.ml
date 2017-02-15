@@ -42,13 +42,14 @@ expression contains a variable "x". For example:
 # contains_var (parse "4+3") 
 - : bool = false
 ......................................................................*)
-
+(* This function iterates over the expression and if the expression is a constant it has to return false if its a variable it returns true.
+For binary and unary functions it looks for the expression(s) and distinguishes them using the same criteria, hence being recursive*)
 let rec contains_var (e : expression) : bool = 
 match e with
 Num _ -> false
 | Var -> true
-| Unop (u, e1) ->  contains_var e1
-|Binop (b, e1, e2) -> 
+| Unop (_u, e1) ->  contains_var e1
+|Binop (_b, e1, e2) -> 
  if contains_var e1 = false && contains_var e2 = false then false
 else true;;
   
@@ -64,7 +65,7 @@ particular value of x. Don't worry about specially handling the
 
 let rec evaluate (e : expression) (x : float) : float =
   match e, x with
-  | Num a, x -> a
+  | Num a, _ -> a
   | Var, x -> x
   | Unop (u, e1), x ->
       (match u with
