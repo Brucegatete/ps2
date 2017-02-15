@@ -125,9 +125,8 @@ deoptionalize [Some 3; None; Some 5; Some 10] =
 ......................................................................*)
 
 let deoptionalize (lst : 'a option list) : 'a list =
-  List.filter (fun x -> x != 0) (List.map (fun x -> match x with
-  None -> 0
-| Some x -> x) lst);;
+List.map (fun (Some x) -> x) (List.filter (fun x -> x != None) lst);;
+  
 
 
 (*......................................................................
